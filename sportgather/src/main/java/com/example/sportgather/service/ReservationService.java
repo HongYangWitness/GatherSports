@@ -1,6 +1,7 @@
 package com.example.sportgather.service;
 
 import com.example.sportgather.domain.Reservation;
+import com.example.sportgather.domain.SportStar;
 import com.example.sportgather.domain.User;
 import com.example.sportgather.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,13 @@ public class ReservationService {
             res.add(0, pq.poll());
         }
         return res;
+    }
+    public List<Reservation> insertNewReservation(Reservation reservation) {
+        List<Reservation> list = reservationRepository.insertNewReservation(reservation);
+        return list;
+    }
+    public List<SportStar> getSportStar(String topN) {
+        List<SportStar> list = reservationRepository.getSportStar(topN);
+        return list;
     }
 }
