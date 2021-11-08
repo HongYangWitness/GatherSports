@@ -35,4 +35,8 @@ public interface ReservationRepository {
             "Order by s.SportName asc\n" +
             "Limit 15;")
     List<SportStar> getSportStar(String topN);
+
+
+    @Select("SELECT BeginTime FROM Reservation WHERE CourtId = #{courtId} AND BeginTime LIKE #{date} ")
+    List<String> findTodayReservation(@Param("date") String date, @Param("courtId") String courtId);
 }
