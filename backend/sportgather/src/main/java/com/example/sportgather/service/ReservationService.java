@@ -4,6 +4,8 @@ import com.example.sportgather.domain.*;
 import com.example.sportgather.repository.CourtRepository;
 import com.example.sportgather.repository.ReservationRepository;
 import com.example.sportgather.repository.SportRepository;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,9 +58,31 @@ public class ReservationService {
         }
         return res;
     }
-    public List<Reservation> insertNewReservation(Reservation reservation) {
-        List<Reservation> list = reservationRepository.insertNewReservation(reservation);
-        return list;
+    public void insertNewReservation(String CourtId,  String UserId, String BeginTime)  {
+        StringBuilder sb = new StringBuilder();
+        sb.append(BeginTime.substring(0,11));
+        sb.append(Integer.parseInt(BeginTime.substring(11, 13)) + 1);
+        sb.append(BeginTime.substring(13, BeginTime.length()));
+        String EndTime = sb.toString();
+        Integer Reservation_Id = reservationRepository.findMaxReservationId();
+        Reservation_Id = Reservation_Id+1;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            Date BeginTime_date = dateFormat.parse(BeginTime);
+            Date EndTime_date = dateFormat.parse(EndTime);
+            Reservation reservation = new Reservation();
+            reservation.setBeginTime(BeginTime_date);
+            reservation.setEndTime(EndTime_date);
+            reservation.setUserId("24");
+            reservation.setCourtId(CourtId.substring(CourtId.length()-1,CourtId.length()));
+            reservation.setReservationId(Reservation_Id);
+            reservationRepository.insertNewReservation(reservation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+  
+ 
+        return ;
     }
     public List<SportStar> getSportStar(String topN) {
         List<SportStar> list = reservationRepository.getSportStar(topN);
@@ -85,13 +109,13 @@ public class ReservationService {
         List<Court> list = courtRepository.findCourtNameBySportName(SportName);
         return list;
     }
-    public List<String> findAvailableTime(String courtId){
+    public List<String> findAvailableTime(String courtName){
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = dateFormat.format(date).substring(0,10);
 
         // return all reserved time
-        Set<String> reservedSet = new HashSet<>(reservationRepository.findTodayReservation(strDate + "%",courtId));
+        Set<String> reservedSet = new HashSet<>(reservationRepository.findTodayReservation(strDate + "%",courtName));
 
         // remove reserved time
         Set<String> availableSet = new HashSet<>();
@@ -100,7 +124,7 @@ public class ReservationService {
             if (i < 10){
                 sb += " 0" + i + ":00:00";
             } else {
-                sb += strDate + " " + i + ":00:00";
+                sb += " " + i + ":00:00";
             }
             availableSet.add(sb);
         }
@@ -110,5 +134,22 @@ public class ReservationService {
         List<String> availableTime = new ArrayList<>(availableSet);
         availableTime.sort((String::compareTo));
         return availableTime;
+    }
+    public List<CourtReservation> findAvailableTimeBySport(String sportName){
+        // the list that stores all CourtReservation
+        List<CourtReservation> ans = new ArrayList<>();
+
+        // all courts name of the selected sportname
+        List<String> courtNames = courtRepository.findCourtsBySportName(sportName);
+        List<String> courtId = courtRepository.findCourtsIdBySportName(sportName);
+        for (int i =0; i<courtNames.size();i++){
+            CourtReservation courtReservation = new CourtReservation();
+            courtReservation.setCourtName(courtNames.get(i));
+            //System.out.println(courtId.get(i));
+            courtReservation.setCourtId(courtId.get(i));
+            courtReservation.setAvailableTime(findAvailableTime(courtNames.get(i)));
+            ans.add(courtReservation);
+        }
+        return ans;
     }
 }

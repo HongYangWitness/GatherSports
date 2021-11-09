@@ -60,7 +60,7 @@ public class MatchViewController {
     // gender = same / diff
     @RequestMapping(method= RequestMethod.GET, value="/mates")
     public Set<String> findScoreMates(@RequestParam Map<String, String> customQuery) {
-        System.out.println("findScoreMates is called");
+        System.out.println(customQuery);
         String age = customQuery.get("age")!=null?customQuery.get("age"):"";
         String gender = customQuery.get("gender")!=null?customQuery.get("gender"):"";
         String major = customQuery.get("major")!=null?customQuery.get("major"):"";

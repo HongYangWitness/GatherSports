@@ -17,4 +17,8 @@ public interface CourtRepository {
     List<String> findCourtNameByAll();
     @Select("SELECT *  FROM Court Join Sport on Court.SportId = Sport.SportId  Where Sport.SportName = #{SportName} ")
     List<Court> findCourtNameBySportName(@Param("SportName") String SportName);
+    @Select("SELECT Court.Name FROM Court NATURAL JOIN Sport WHERE SportName = #{SportName} Order By Court.Name")
+    List<String> findCourtsBySportName(@Param("SportName") String SportName);
+    @Select("SELECT Court.CourtId FROM Court NATURAL JOIN Sport WHERE SportName = #{SportName} Order By Court.Name")
+    List<String> findCourtsIdBySportName(@Param("SportName") String SportName);
 }

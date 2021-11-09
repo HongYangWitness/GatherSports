@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Reservation {
 
-    private String ReservationId;
+    private Integer ReservationId;
 
     private String UserId;
 
@@ -14,11 +14,11 @@ public class Reservation {
 
     private Date EndTime;
 
-    public String getReservationId() {
+    public Integer getReservationId() {
         return ReservationId;
     }
 
-    public void setReservationId(String reservationId) {
+    public void setReservationId(Integer reservationId) {
         ReservationId = reservationId;
     }
 

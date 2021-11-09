@@ -21,7 +21,7 @@ public interface ReservationRepository {
 
     @Insert("Insert into Reservation(ReservationId, CourtId, UserId, BeginTime, EndTime) Values(#{ReservationId}," +
             "#{CourtId}, #{UserId}, #{BeginTime}, #{EndTime})")
-    List<Reservation>  insertNewReservation(Reservation reservation);
+    Void  insertNewReservation(Reservation reservation);
     @Select("With newTable AS\n" +
             "(Select UserId, SportId,\n" +
             "row_number() OVER (PARTITION By SportId Order by cnt desc) as rk\n" +
@@ -37,6 +37,9 @@ public interface ReservationRepository {
     List<SportStar> getSportStar(String topN);
 
 
-    @Select("SELECT BeginTime FROM Reservation WHERE CourtId = #{courtId} AND BeginTime LIKE #{date} ")
-    List<String> findTodayReservation(@Param("date") String date, @Param("courtId") String courtId);
+    @Select("SELECT BeginTime FROM Reservation Natural Join Court WHERE Court.Name = #{CourtName} AND BeginTime LIKE #{date}  Order By Court.Name")
+    List<String> findTodayReservation(@Param("date") String date, @Param("CourtName") String CourtName);
+
+    @Select("SELECT max(Reservation.ReservationId) FROM Reservation")
+    Integer findMaxReservationId();
 }

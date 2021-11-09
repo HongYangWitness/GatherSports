@@ -4,7 +4,7 @@ import Profile from 'pages/Profile';
 import Login from 'pages/Login';
 import Register from 'pages/Register';
 import Match from 'pages/match/Match';
-
+import Reservation from 'pages/Reservation/Reservation'
 // Font Awesome Style Sheet
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -19,6 +19,7 @@ function App() {
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exam path='/match' component={Match} />
+            <Route exact path='/reservation' component={Reservation}/>
             <Redirect from="*" to="/" />
         </Switch>
     );
