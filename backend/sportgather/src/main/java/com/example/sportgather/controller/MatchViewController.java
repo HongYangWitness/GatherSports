@@ -1,8 +1,11 @@
 package com.example.sportgather.controller;
 
+import com.example.sportgather.domain.Mates;
 import com.example.sportgather.domain.Sport;
 import com.example.sportgather.domain.User;
+import com.example.sportgather.service.LoginService;
 import com.example.sportgather.service.MatchService;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +19,12 @@ import java.util.Set;
 public class MatchViewController {
 
     private final MatchService matchService;
+    private final LoginService loginService;
 
     @Autowired
-    public MatchViewController(MatchService matchService) {
+    public MatchViewController(MatchService matchService, LoginService loginService) {
         this.matchService = matchService;
+        this.loginService = loginService;
     }
 
     @GetMapping(path = "/hobby/{id}")
@@ -68,5 +73,40 @@ public class MatchViewController {
         String search = customQuery.get("search")!=null?customQuery.get("search"):"";
 
         return matchService.queryIntersectMates(customQuery.get("id"), age, gender, major, search);
+    }
+
+    @CrossOrigin
+    @PostMapping(path="/addfriend")
+    public String addFriend(@RequestParam Map<String, String> customQuery) {
+        System.out.println("send add friend request");
+        String receiverEmail = customQuery.get("receiverEmail");
+        String requestid = customQuery.get("requestid");
+        String receiverid = loginService.showId(receiverEmail);
+        System.out.println(requestid);
+        System.out.println(receiverid);
+        matchService.sendFriendRequest(requestid, receiverid);
+        return "success";
+    }
+
+    @GetMapping(path="/mateRequest/{id}")
+    public List<String> fetchMatesRequest(@PathVariable("id") String UserId) {
+        System.out.println("fetchMatesRequest is called");
+        return matchService.fetchRequest(UserId);
+    }
+
+    @CrossOrigin
+    @PutMapping(path="/updateState")
+    public String updateState(@RequestParam Map<String, String> customQuery) {
+        String requestid = customQuery.get("requestid");
+        String resid = customQuery.get("resid");
+        String res = customQuery.get("res");
+        matchService.updateState(requestid, resid, res);
+        return "success";
+    }
+
+    @GetMapping(path="/reqSent/{id}")
+    public List<Mates> reqSent(@PathVariable("id") String UserId) {
+        System.out.println("fetchMatesRequest is called");
+        return matchService.fetchReqSent(UserId);
     }
 }
