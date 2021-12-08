@@ -5,7 +5,7 @@ import H1 from "@material-tailwind/react/Heading1";
 import Page from 'components/login/Page';
 import Icon from '@material-tailwind/react/Icon';
 import ProfilePicture from 'assets/img/profile.jpg';
-import Background from 'assets/img/UIUC.jpg';
+import Background from 'assets/img/blue.jpeg';
 import {Component} from "react";
 import axios from "axios";
 import InputIcon from "@material-tailwind/react/InputIcon";
@@ -46,9 +46,9 @@ class Content extends Component {
     }
 
     async getCnInfo(id) {
-        console.log(id)
+        // console.log(id)
         const info = await getContInfo(id);
-        console.log(info)
+        // console.log(info)
         this.setState({
             firstName: info[0].firstName,
             lastName: info[0].lastName,
@@ -134,14 +134,17 @@ class Content extends Component {
      }
 
     render() {
+        // console.log(this.props);
         return (
             <Page>
-                <div
+                <div className
                     style={{
                         width: '100%',
                         height: '2000%',
                         background:`url(${Background})`,
-                        backgroundSize: 'cover'
+                        backgroundSize: 'cover',
+                        position: "relative",
+                        top: "-13px"
                     }}
                 >
                     <div className="flex flex-wrap justify-center">
@@ -188,10 +191,10 @@ class Content extends Component {
                                 iconName="location_city"
                                 placeholder="location"
                                 onChange={event => this.setState({loc: event.target.value})}/>
-                            <div className="mb-2 text-indigo-800 font-medium flex items-center justify-center gap-2">
+                            {/* <div className="mb-2 text-indigo-800 font-medium flex items-center justify-center gap-2">
                                 <Icon name="security" size="3xl"/>
                                 UserId: {this.state.id}
-                            </div>
+                            </div> */}
                             <div className="mb-2 text-purple-800 font-medium flex items-center justify-center gap-2">
                                 <Icon name="email" size="3xl"/>
                                 {this.state.email}
