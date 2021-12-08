@@ -1,8 +1,10 @@
 package com.example.sportgather.service;
 
+import com.example.sportgather.domain.Mates;
 import com.example.sportgather.domain.Sport;
 import com.example.sportgather.domain.User;
 import com.example.sportgather.repository.HobbyRepository;
+import com.example.sportgather.repository.MatesRepository;
 import com.example.sportgather.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,12 @@ public class MatchService {
     @Autowired
     private UserRepository userRepository;
     private HobbyRepository hobbyRepository;
+    private MatesRepository matesRepository;
 
-    public MatchService(UserRepository userRepository, HobbyRepository hobbyRepository) {
+    public MatchService(UserRepository userRepository, HobbyRepository hobbyRepository, MatesRepository matesRepository) {
         this.userRepository = userRepository;
         this.hobbyRepository = hobbyRepository;
+        this.matesRepository = matesRepository;
     }
 
     public List<User> queryMatesByHobby(String id){
@@ -205,4 +209,20 @@ public class MatchService {
 //        Map<String, Integer> sortedMap = MapUtil.sortByValue(scoreMap);
 //        return sortedMap.keySet();
 //    }
+
+        public List<String> fetchRequest(String rid) {
+            return matesRepository.fetchRequest(rid);
+        }
+
+        public void updateState(String requestid, String receiverid, String res) {
+            matesRepository.updateState(requestid, receiverid, res);
+        }
+
+        public void sendFriendRequest(String request, String receiver) {
+            matesRepository.friendRequest(request, receiver);
+        }
+
+        public List<Mates> fetchReqSent(String id) {
+            return matesRepository.fetchAllReqSent(id);
+        }
 }

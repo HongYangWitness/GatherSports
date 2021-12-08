@@ -16,11 +16,13 @@ public class LoginService {
 
     public static String showId(String email){
         String id = userRepository.displayId(email);
+        System.out.println(id);
         return id;
     }
 
     public static String showPassword(String email){
         String password = userRepository.displayPassword(email);
+        System.out.println(password);
         return password;
     }
 
