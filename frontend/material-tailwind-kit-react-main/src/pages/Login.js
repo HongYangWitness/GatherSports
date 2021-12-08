@@ -30,6 +30,7 @@ class Login extends Component {
             password: "",
             click: 0
         }
+        this.getId = this.getId.bind(this);
     }
 
     async getId(email, pwd) {
@@ -40,7 +41,7 @@ class Login extends Component {
                 click: 1
             });
         }
-        console.log(this.state.info)
+        // console.log(this.state.info)
     }
 
     render() {

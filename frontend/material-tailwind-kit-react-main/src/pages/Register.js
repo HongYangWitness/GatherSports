@@ -16,6 +16,7 @@ async function getRegisInfo(fstName, eml, pwd) {
     const firstName = fstName;
     const email = eml;
     const password = pwd;
+    // console.log(`${firstName} ${email} ${password}`);
     const regis_info = await axios.post(infoUrl +'/' + firstName + '/' + email + '/' + password);
     return regis_info.data;
 }
@@ -64,7 +65,7 @@ class Register extends Component {
                                             <InputIcon
                                                 type="text"
                                                 color="lightBlue"
-                                                placeholder="FirstName"
+                                                placeholder="Name"
                                                 iconName="account_circle"
                                                 onChange={event => this.setState({firstName: event.target.value})}
                                             />
