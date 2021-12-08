@@ -8,27 +8,34 @@ import H6 from "@material-tailwind/react/Heading6";
 import Dropdown from "@material-tailwind/react/Dropdown"
 import DropdownItem from "@material-tailwind/react/DropdownItem"
 import Input from "@material-tailwind/react/Input";
+import Quote from "@material-tailwind/react/Quote"
+import Button from "@material-tailwind/react/Button"
 import LeadText from "@material-tailwind/react/LeadText";
 import GatherSportNav from 'components/GatherSportNav';
-import fakeProfile from 'assets/img/profile_default.jpeg';
+import fakeProfile from 'assets/img/sport_girl.png';
 import Page from 'components/login/Page';
+
 import axios from 'axios';
 import './styles.match.css';
 
-const baseURL = 'http://localhost:8080/match/mates';
+const baseURL = 'http://localhost:8080/match';
 const infoURL = 'http://localhost:8080/profile';
 
 
 class Match extends Component {
     constructor(props) {
         super(props);
+        // TODO
         this.state = {
             mates: [],
             age: '', 
             gender: '', 
             major: '',
             username: '',
+            userid: this.props.location.state.user,
+            friends: {}
         }
+        // console.log(this.props)
 
         this.onAgeChange = this.onAgeChange.bind(this);
         this.onGenderChange = this.onGenderChange.bind(this);
@@ -37,16 +44,17 @@ class Match extends Component {
     }
     async getUser(id) {
         var result = await axios.get(infoURL+'/'+id);
-        console.log(result.data[0].firstName + ' ' + result.data[0].lastName)
+        // console.log(result.data[0].firstName + ' ' + result.data[0].lastName)
         this.setState({
             username: result.data[0].firstName + ' ' + result.data[0].lastName
         })
     }
 
     async getMates(search) {
-        // TODO: change id to props later
-        const id = '24';
-        const mate_ids = await axios.get(baseURL, 
+        // TODO
+        const id = this.props.location.state.user;
+        // console.log(this.props.location.state.user);
+        const mate_ids = await axios.get(baseURL+'/mates', 
             {
             params: {
                 id: id,
@@ -62,13 +70,14 @@ class Match extends Component {
             var result = await axios.get(infoURL+'/'+mate_id);
             mates_info.push(result.data[0]);
         }
-        // console.log(mates_info.length);
+        // console.log(mates_info);
         return mates_info;
     }
 
     async componentDidMount() {
         const mates = await this.getMates();
-        await this.getUser("24");
+        await this.getUser(this.state.userid); // TODO
+        await this.fetchReqSend();
         
         this.setState({
             mates: mates,
@@ -76,7 +85,7 @@ class Match extends Component {
     }
 
     async onAgeChange(val) {
-        console.log(`Change age param to ${val}`);
+        // console.log(`Change age param to ${val}`);
 
         this.setState({ age: val }, async () => {
             const mates = await this.getMates();
@@ -87,7 +96,7 @@ class Match extends Component {
     }
 
     async onGenderChange(val) {
-        console.log(`Change gender param to ${val}`);
+        // console.log(`Change gender param to ${val}`);
 
         this.setState({ gender: val }, async () => {
             const mates = await this.getMates();
@@ -128,11 +137,65 @@ class Match extends Component {
         })
     }
 
+    async addFriend(receiverEmail) {
+        // TODO
+        await axios.post(baseURL + '/addfriend/', null,
+        {
+            params: {
+                receiverEmail: receiverEmail,
+                requestid: this.state.userid
+            }
+        });
+    }
+
+    async fetchReqSend() {
+        const friendArr = (await axios.get(baseURL + "/reqSent/" + this.state.userid)).data;
+        const friendDict = {};
+        for (const f of friendArr) {
+            friendDict[f.receiverid] = f.state;
+        }
+        console.log(friendDict);
+
+        this.setState({
+            friends: friendDict
+        })
+    }
+
+    switchcase(id, email) {
+        if (id in this.state.friends) {
+            if (this.state.friends[id] === "Wait") {
+                return (<Quote color="lightBlue" >
+                        Request Sent
+                        </Quote>)
+            } else if (this.state.friends[id] === 'Rej') {
+                return (<Quote color="blueGray" >
+                 Rejected
+                </Quote>);
+            } 
+            return (<Quote color="green" >
+                Already Friends
+                </Quote>);
+        }
+        return (
+            <Button
+            className="add-friend"
+            color="lightBlue"
+            buttonType="link"
+            size="lg"
+            rounded={false}
+            block={false}
+            iconOnly={false}
+            ripple="dark"
+            onClick={() =>{this.addFriend(email)}}
+            >Add Friend</Button>
+        )
+    }
+
     render() {
 
         return (
             <Page> 
-                <GatherSportNav username={this.state.username}/>
+                <GatherSportNav userid={this.state.userid}/>
                 <div className='filters'>
 
                 <Dropdown
@@ -214,9 +277,24 @@ class Match extends Component {
                             <CardBody>
                                 <H6 color="gray">{mate.firstName} {mate.lastName}</H6>
                                 <Paragraph color="blueGray">
-                                {mate.gender==='M'?'Male':'Female'}
+                                {mate.gender==='M'?'Male':'Female'} &nbsp;&nbsp;
+
+                                {mate.age}
                                 </Paragraph>
+                                
                             </CardBody>
+                            {this.switchcase(mate.userId, mate.email)}
+                            
+                            
+                            {/* // {mate.userId in this.state.friends?
+                            // this.state.friends[mate.userId].state === "Wait"?
+                            // "Request Sent"
+                            // :this.state.friends[mate.userId].state === "Rej"?
+                            // "Rejected":
+                            // "Already Friend"
+                            // :
+                            // } */}
+                            
                     </Card>
                     ))
 

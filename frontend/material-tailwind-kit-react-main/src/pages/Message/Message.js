@@ -21,6 +21,7 @@ class Message extends Component {
             title: "",
             content: ""
         }
+        console.log(this.state.id);
     }
 
     async getAllMsg() {
@@ -34,6 +35,7 @@ class Message extends Component {
         this.setState({
             allMsg: allMsg.data
         })
+        console.log(this.state.allMsg)
     }
 
     async componentDidMount() {
@@ -47,12 +49,14 @@ class Message extends Component {
         return (
             <Page>
                 <GatherSportNav userid={this.props.location.state.userid}/>
-                <div
+                <div 
                     style={{
                         width: '100%',
-                        height: '2000%',
+                        height: '2000px',
                         background:`url(${Background})`,
-                        backgroundSize: 'cover'
+                        backgroundSize: 'cover',
+                        position: "relative",
+                        top: "-13px"
                     }}
                 >
                     <div className="flex justify-center">
